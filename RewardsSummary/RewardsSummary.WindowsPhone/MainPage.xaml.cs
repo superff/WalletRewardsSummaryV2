@@ -137,11 +137,11 @@ namespace RewardsSummary
                 // Encode the user's account number as a Qr Code to be used in the store.
                 card.Barcode = new WalletBarcode(WalletBarcodeSymbology.Qr, accountNumber);
                 card.LastUpdated = DateTimeOffset.Now;
+                string cardId = Guid.NewGuid().ToString();
                 
+                await this._walletStore.AddAsync(cardId, card);
 
-                await this._walletStore.AddAsync(Guid.NewGuid().ToString(), card);
-
-                await this.ShowWalletItemAsync();
+                await this.ShowWalletItemAsync(cardId);
             }
             catch (Exception ex)
             {
@@ -216,9 +216,9 @@ namespace RewardsSummary
 
         }
 
-        public async Task ShowWalletItemAsync()
+        public async Task ShowWalletItemAsync(string id)
         {
-            WalletItem walletItem = await this._walletStore.GetWalletItemAsync(StoreItemName);
+            WalletItem walletItem = await this._walletStore.GetWalletItemAsync(id);
 
             // If the item exists, show it in Wallet
             if (walletItem != null)

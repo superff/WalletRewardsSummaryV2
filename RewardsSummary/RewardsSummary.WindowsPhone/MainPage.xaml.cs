@@ -79,54 +79,67 @@ namespace RewardsSummary
             try
             {
                 // Create the membership card.
-                WalletItem card = new WalletItem(WalletItemKind.MembershipCard, ItemName);
+                WalletItem card = new WalletItem(WalletItemKind.MembershipCard, ItemName)
+                {
+                    BodyColor = Windows.UI.Colors.Brown,
+                    BodyFontColor = Windows.UI.Colors.White,
+                    HeaderColor = Windows.UI.Colors.SaddleBrown,
+                    HeaderFontColor = Windows.UI.Colors.White,
+                    IssuerDisplayName = DisplayName,
+                    Logo336x336 =
+                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee336x336.png")),
+                    Logo99x99 =
+                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee99x99.png")),
+                    Logo159x159 =
+                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee159x159.png")),
+                    HeaderBackgroundImage =
+                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/header640x130.png"))
+                };
 
                 // Set colors, to give the card our distinct branding.
-                card.BodyColor = Windows.UI.Colors.Brown;
-                card.BodyFontColor = Windows.UI.Colors.White;
-                card.HeaderColor = Windows.UI.Colors.SaddleBrown;
-                card.HeaderFontColor = Windows.UI.Colors.White;
 
                 // Set basic properties.
-                card.IssuerDisplayName = DisplayName;
 
                 // Set some images.
-                card.Logo336x336 = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee336x336.png"));
 
-                card.Logo99x99 = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee99x99.png"));
 
-                card.Logo159x159 = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee159x159.png"));
 
-                card.HeaderBackgroundImage = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/header640x130.png"));
 
                 GetStoreLocations.WaitOne();
 
                 // ToDo: Value of retailer name has to be populated from Geo Api lookup
-                WalletItemCustomProperty prop = new WalletItemCustomProperty(NearestStoreID, "Walgreens");
-                prop.DetailViewPosition = WalletDetailViewPosition.HeaderField1;
-                prop.SummaryViewPosition = WalletSummaryViewPosition.Field1;
+                WalletItemCustomProperty prop = new WalletItemCustomProperty(NearestStoreID, "Walgreens")
+                {
+                    DetailViewPosition = WalletDetailViewPosition.HeaderField1,
+                    SummaryViewPosition = WalletSummaryViewPosition.Field1
+                };
                 card.DisplayProperties["Retailer"] = prop;
 
                 // ToDo: This needs to be accessed from Walgreens dev Apis
                 string accountNumber = "123456";
-                prop = new WalletItemCustomProperty("Account Number", accountNumber);
-                prop.DetailViewPosition = WalletDetailViewPosition.PrimaryField1;
+                prop = new WalletItemCustomProperty("Account Number", accountNumber)
+                {
+                    DetailViewPosition = WalletDetailViewPosition.PrimaryField1,
+                    AutoDetectLinks = false
+                };
 
                 // We don't want this field entity extracted as it will be interpreted as a phone number.
-                prop.AutoDetectLinks = false;
                 card.DisplayProperties["AcctId"] = prop;
 
 
                 // ToDo: This needs to be accessed from Walgreens dev Apis
-                prop = new WalletItemCustomProperty("Points", "2000");
-                prop.DetailViewPosition = WalletDetailViewPosition.PrimaryField2;
+                prop = new WalletItemCustomProperty("Points", "2000")
+                {
+                    DetailViewPosition = WalletDetailViewPosition.PrimaryField2
+                };
                 card.DisplayProperties["Points"] = prop;
 
                 // Encode the user's account number as a Qr Code to be used in the store.
                 card.Barcode = new WalletBarcode(WalletBarcodeSymbology.Qr, accountNumber);
+                card.LastUpdated = DateTimeOffset.Now;
+                
 
-
-                await this._walletStore.AddAsync(StoreItemName, card);
+                await this._walletStore.AddAsync(Guid.NewGuid().ToString(), card);
 
                 await this.ShowWalletItemAsync();
             }

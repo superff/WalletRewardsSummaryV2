@@ -61,7 +61,9 @@ namespace RewardsSummary
 
         private const string RetailerName = "Store";
 
-        private static string NearestStore = "Store";
+        private static string NearestStoreID = "Store";
+
+        private static Store[] StoreList = new Store[10];
 
         private static ManualResetEvent GetStoreLocations = new ManualResetEvent(false);
 
@@ -99,9 +101,8 @@ namespace RewardsSummary
 
                 GetStoreLocations.WaitOne();
 
-
                 // ToDo: Value of retailer name has to be populated from Geo Api lookup
-                WalletItemCustomProperty prop = new WalletItemCustomProperty(NearestStore, "Walgreens");
+                WalletItemCustomProperty prop = new WalletItemCustomProperty(NearestStoreID, "Walgreens");
                 prop.DetailViewPosition = WalletDetailViewPosition.HeaderField1;
                 prop.SummaryViewPosition = WalletSummaryViewPosition.Field1;
                 card.DisplayProperties["Retailer"] = prop;
@@ -179,9 +180,8 @@ namespace RewardsSummary
             JsonSerializer serializer = new JsonSerializer();
             var responseObj = (JObject)JsonConvert.DeserializeObject(responseString);
 
-            NearestStore = (string)responseObj["stores"][0]["stnm"];
+            NearestStoreID = (string)responseObj["stores"][0]["stnm"];
 
-            Store[] StoreList = new Store[10];
             for (int i = 0; i < 10; i++)
             {
                 StoreList[i] = new Store("Wallgreens",

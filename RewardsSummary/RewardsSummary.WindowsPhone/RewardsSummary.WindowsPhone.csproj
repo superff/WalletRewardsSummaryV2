@@ -92,6 +92,10 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\BarCode150.png" />
+    <Content Include="Assets\BarCode44.png" />
+    <Content Include="Assets\BarCode50.png" />
+    <Content Include="Assets\BarCode71.png" />
     <Content Include="Assets\coffee159x159.png" />
     <Content Include="Assets\coffee336x336.png" />
     <Content Include="Assets\coffee99x99.png" />

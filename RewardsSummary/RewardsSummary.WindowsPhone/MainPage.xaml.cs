@@ -83,17 +83,15 @@ namespace RewardsSummary
                 {
                     BodyColor = Windows.UI.Colors.Brown,
                     BodyFontColor = Windows.UI.Colors.White,
-                    HeaderColor = Windows.UI.Colors.SaddleBrown,
+                    HeaderColor = Windows.UI.Colors.CornflowerBlue,
                     HeaderFontColor = Windows.UI.Colors.White,
-                    IssuerDisplayName = DisplayName,
-                    Logo336x336 =
-                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee336x336.png")),
+                    PromotionalImage =
+                        await
+                            StorageFile.GetFileFromApplicationUriAsync(
+                                new Uri("ms-appx:///assets/walgreens_balance_rewards.png")),
                     Logo99x99 =
-                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee99x99.png")),
-                    Logo159x159 =
-                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/coffee159x159.png")),
-                    HeaderBackgroundImage =
-                        await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/header640x130.png"))
+                        await
+                            StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///assets/WalgreensFlagLogo.png"))
                 };
 
                 // Set colors, to give the card our distinct branding.
@@ -110,29 +108,34 @@ namespace RewardsSummary
                 // ToDo: Value of retailer name has to be populated from Geo Api lookup
                 WalletItemCustomProperty prop = new WalletItemCustomProperty(NearestStoreID, "Walgreens")
                 {
-                    DetailViewPosition = WalletDetailViewPosition.HeaderField1,
                     SummaryViewPosition = WalletSummaryViewPosition.Field1
                 };
                 card.DisplayProperties["Retailer"] = prop;
 
                 // ToDo: This needs to be accessed from Walgreens dev Apis
-                string accountNumber = "123456";
+                string accountNumber = "100342";
                 prop = new WalletItemCustomProperty("Account Number", accountNumber)
                 {
-                    DetailViewPosition = WalletDetailViewPosition.PrimaryField1,
-                    AutoDetectLinks = false
+                    DetailViewPosition = WalletDetailViewPosition.PrimaryField1
                 };
 
                 // We don't want this field entity extracted as it will be interpreted as a phone number.
                 card.DisplayProperties["AcctId"] = prop;
 
+                // ToDo: Get branch from Api
+                prop = new WalletItemCustomProperty("Branch", "Welcome to Walgreens on 45th St")
+                {
+                    DetailViewPosition = WalletDetailViewPosition.HeaderField1
+                };
+                card.DisplayProperties["BranchId"] = prop;
+
 
                 // ToDo: This needs to be accessed from Walgreens dev Apis
-                prop = new WalletItemCustomProperty("Points", "2000")
+                prop = new WalletItemCustomProperty("Your Walgreen Points", "121")
                 {
-                    DetailViewPosition = WalletDetailViewPosition.PrimaryField2
+                    DetailViewPosition = WalletDetailViewPosition.FooterField1
                 };
-                card.DisplayProperties["Points"] = prop;
+                card.DisplayProperties["PointsId"] = prop;
 
                 // Encode the user's account number as a Qr Code to be used in the store.
                 card.Barcode = new WalletBarcode(WalletBarcodeSymbology.Qr, accountNumber);
